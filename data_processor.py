@@ -1,6 +1,14 @@
 from typing import Tuple
 import pandas as pd
 from pandas import DataFrame
+from enum import Enum
+
+class Position(Enum):
+    FORWARD = 'Forward'
+    MIDFIELDER = 'Midfielder'
+    DEFENDER = 'Defender'
+    GOALKEEPER = 'Goalkeeper'
+
 
 
 def get_data_of_player_by_position() -> Tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
@@ -8,22 +16,13 @@ def get_data_of_player_by_position() -> Tuple[DataFrame, DataFrame, DataFrame, D
     Tuple(strikers, midfielders, defenders, goalkeapers)
     """
     data = _merge_data_for_players()
-    return (_extract_strikers_from(data),
-        _extract_midfielders_from(data),
-        _extract_defenders_from(data),
-        _extract_goalkeapers_from(data))
+    return (_extract_from(data, Position.FORWARD),
+        _extract_from(data, Position.MIDFIELDER),
+        _extract_from(data, Position.DEFENDER),
+        _extract_from(data, Position.GOALKEEPER))
 
-def _extract_strikers_from(data: pd.DataFrame) -> pd.DataFrame:
-    return _eliminate_irrelevant_data_from(data[data['position'] == 'Forward'])
-
-def _extract_midfielders_from(data: pd.DataFrame) -> pd.DataFrame:
-    return _eliminate_irrelevant_data_from(data[data['position'] == 'Midfielder'])
-
-def _extract_defenders_from(data: pd.DataFrame) -> pd.DataFrame:
-    return _eliminate_irrelevant_data_from(data[data['position'] == 'Defender'])
-
-def _extract_goalkeapers_from(data: pd.DataFrame) -> pd.DataFrame:
-    return _eliminate_irrelevant_data_from(data[data['position'] == 'Goalkeeper'])
+def _extract_from(data: pd.Dataframe, posistion: Posistion) -> pd.Dataframe:
+    return _eliminate_irrelevant_data_from(data[data['position'] == posistion.value])
 
 def _eliminate_irrelevant_data_from(players):
     for column in list(players.columns):
